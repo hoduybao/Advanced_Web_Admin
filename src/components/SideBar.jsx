@@ -22,6 +22,7 @@ const items = [
 ];
 const SideBar = () => {
   const navigate = useNavigate();
+  const pathName = window.location.pathname;
 
   const [open, setOpen] = useState(false);
 
@@ -45,8 +46,7 @@ const SideBar = () => {
         style={{
           itemMarginBlock: 10,
         }}
-        defaultSelectedKeys={["1"]}
-        defaultOpenKeys={["sub1"]}
+        defaultSelectedKeys={[pathName.includes("manage-classes") ? "2" : "1"]}
         mode="inline"
         theme="light"
         items={items}

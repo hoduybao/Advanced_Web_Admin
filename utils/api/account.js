@@ -19,6 +19,10 @@ class AccountService {
         const response = await axios.put(path);
         return response;
     }
+    uploadIds=async(path,options={})=>{
+        const response = await axios.post(path,options);
+        return response;
+    }
 
 }
 const ApiAccount=new AccountService();

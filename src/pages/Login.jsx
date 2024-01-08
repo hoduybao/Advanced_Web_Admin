@@ -97,7 +97,7 @@ export default function Login() {
           Login to Admin Dashboard BTH Classroom
         </h3>
         <div className="p-8 text-sm flex flex-col">
-          <label>Email</label>
+          <label>Username</label>
           <input
             value={signin.email}
             onChange={handleChange}

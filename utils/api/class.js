@@ -7,6 +7,10 @@ class ClassService {
         const response = await axios.get(path);
         return response;
     };
+    activeClass =async (path)=>{
+        const response = await axios.put(path);
+        return response;
+    };
     
 
 }

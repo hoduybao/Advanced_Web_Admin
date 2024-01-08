@@ -1,7 +1,8 @@
-import { Button, Spin, Table } from "antd";
+import { Button, Spin, Table, notification } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ApiAccount from "../../utils/api/account";
+import Papa from "papaparse";
 
 const tranferDataToTable = (data) => {
   return data.map((item) => {
@@ -18,6 +19,8 @@ const tranferDataToTable = (data) => {
 
 export default function ManageAccounts() {
   const navigate = useNavigate();
+  const [api, contextHolder] = notification.useNotification();
+
   const columns = [
     {
       title: "Name",
@@ -64,7 +67,6 @@ export default function ManageAccounts() {
   const [dataResponse, setDataResponse] = useState(null);
 
   const [isLoading, setIsLoading] = useState(false);
-  console.log(listUsers);
 
   const getListUsers = async (currentPage) => {
     setIsLoading(true);
@@ -76,13 +78,90 @@ export default function ManageAccounts() {
     setListUsers(data);
     setIsLoading(false);
   };
+  const handleExportUsers = () => {
+    const users = [];
+    for (let i = 0; i < listUsers?.length; i++) {
+      users.push({
+        Email: listUsers[i].email,
+        "Student ID": listUsers[i].mssv,
+      });
+    }
+    const csv = Papa.unparse(users, {
+      quotes: true,
+    });
+
+    // Tạo một Blob từ chuỗi CSV
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+
+    // Tạo một đường dẫn URL cho Blob
+    const url = URL.createObjectURL(blob);
+
+    // Tạo một thẻ a để tạo và tải tệp CSV
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `List users.csv`;
+    a.click();
+
+    // Giải phóng URL đối tượng
+    URL.revokeObjectURL(url);
+  };
+  const handleChangeUploadGrade = (event) => {
+    const file = event.target.files[0];
+
+    var formdata = new FormData();
+    formdata.append("file", file);
+
+    const fetch = async () => {
+      setIsLoading(true);
+
+      await ApiAccount.uploadIds(`admin/upload-map-studentId`, formdata).then(
+        (response) => {
+          setDataResponse(response.data);
+          const data = tranferDataToTable(response.data.Userdata);
+          setListUsers(data);
+          api.success({
+            duration: 1.5,
+            message: `Map students ids successfully!`,
+            placement: "topRight",
+          });
+           
+        }
+      );
+      setIsLoading(false);
+    };
+    fetch();
+  };
+
   useEffect(() => {
     getListUsers(1);
   }, []);
 
   return (
     <div className="py-6 px-8 flex flex-col w-full">
+    {contextHolder}
       <div className="text-2xl font-medium  mb-8">Manage list users</div>
+      <div className="flex gap-4 mb-4 justify-end">
+        <Button
+          onClick={handleExportUsers}
+          className="border-[#355ED4] text-[#355ED4] text-base font-medium h-10"
+        >
+          Export list users
+        </Button>
+
+        <input
+          id="mapIds"
+          type="file"
+          accept=".csv"
+          onChange={handleChangeUploadGrade}
+          hidden
+          name="fileUpload"
+        />
+        <Button className="border-[#355ED4] text-[#355ED4] text-base font-medium h-10">
+          <label className="h-full w-full" htmlFor={"mapIds"}>
+            Map stundent ids
+          </label>
+        </Button>
+      </div>
       <Spin spinning={isLoading}>
         <Table
           columns={columns}

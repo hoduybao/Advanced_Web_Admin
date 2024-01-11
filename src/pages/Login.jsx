@@ -93,6 +93,11 @@ export default function Login() {
       setErrors(newErrors);
     }
   };
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleLogin(event);
+    }
+  };
 
   return (
     <div className="relative w-full min-h-screen">
@@ -103,6 +108,8 @@ export default function Login() {
         <div className="p-8 text-sm flex flex-col">
           <label>Username</label>
           <input
+                      onKeyDown={handleKeyDown}
+
             value={signin.email}
             onChange={handleChange}
             name="email"
@@ -114,6 +121,8 @@ export default function Login() {
           )}
           <label className="mt-4">Password</label>
           <input
+                      onKeyDown={handleKeyDown}
+
             value={signin.password}
             onChange={handleChange}
             name="password"

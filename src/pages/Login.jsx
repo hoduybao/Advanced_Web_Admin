@@ -4,6 +4,8 @@ import ApiUser from "../../utils/api/user";
 import { useDispatch } from "react-redux";
 import { login } from "../store/admin/userSlice";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+
 const Context = React.createContext({
   name: "Default",
 });
@@ -57,7 +59,7 @@ export default function Login() {
     if (success) {
       setLoading(true);
       const fetch = async () => {
-        let response = await ApiUser.postLogin(`user/login`, {
+        let response = await ApiUser.postLogin(`user/loginAdmin`, {
           email: signin.email,
           password: signin.password,
         });
@@ -72,6 +74,8 @@ export default function Login() {
           );
           navigate("/");
         } else {
+          Swal.fire("Opps!", response.message, "error");
+
           api.error({
             message: `Login falied!`,
             description: (

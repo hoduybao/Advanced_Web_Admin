@@ -158,7 +158,7 @@ export default function ManageAccounts() {
         />
         <Button className="border-[#355ED4] text-[#355ED4] text-base font-medium h-10">
           <label className="h-full w-full" htmlFor={"mapIds"}>
-            Map stundent ids
+            Map student ids
           </label>
         </Button>
       </div>
